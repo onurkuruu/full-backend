@@ -3,7 +3,9 @@ package com.oonurkuru.backend.dto;
 import com.oonurkuru.backend.annotations.Mapper;
 import com.oonurkuru.backend.domains.Employee;
 import com.oonurkuru.backend.domains.Project;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
@@ -16,6 +18,8 @@ public class ProjectDTO implements Serializable {
 
     private Integer id;
 
+    @NotEmpty(message = "İsim alanı Boş olamaz")
+    @Size(min = 3, max = 30, message = "İsim alanı en az 3, en çok 30 karakterden oluşmalıdır.")
     private String name;
 
     private List<EmployeeDTO> employeeList;

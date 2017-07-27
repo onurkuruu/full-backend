@@ -1,6 +1,7 @@
 package com.oonurkuru.backend.dao;
 
 import com.oonurkuru.backend.domains.Department;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface DepartmentDao extends CrudRepository<Department, Integer> {
+public interface DepartmentDao extends CrudRepository<Department, Integer>, JpaRepository<Department, Integer> {
 
 
 }

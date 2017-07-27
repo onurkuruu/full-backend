@@ -94,13 +94,14 @@ public class EmployeeResource {
     @Path("/{id: \\d+}")
     public Response updateEmployee(@Valid EmployeeDTO employee) {
 
+        EmployeeDTO updated;
         try {
-            employeeService.save(employee);
+            updated = employeeService.save(employee);
         } catch (CustomException e) {
             return Response.status(500).entity(e.getExceptionModel()).build();
         }
 
-        return Response.status(201).entity(employee).build();
+        return Response.status(201).entity(updated).build();
     }
 
     @DELETE
