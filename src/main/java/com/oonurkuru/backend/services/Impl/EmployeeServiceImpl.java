@@ -5,7 +5,9 @@ import com.oonurkuru.backend.dao.EmployeeDao;
 import com.oonurkuru.backend.dao.ProjectDao;
 import com.oonurkuru.backend.dao.RoleDao;
 import com.oonurkuru.backend.domains.Employee;
+import com.oonurkuru.backend.domains.Project;
 import com.oonurkuru.backend.dto.EmployeeDTO;
+import com.oonurkuru.backend.dto.ProjectDTO;
 import com.oonurkuru.backend.exceptions.CustomException;
 import com.oonurkuru.backend.services.EmployeeService;
 import com.oonurkuru.backend.utils.Mapper;
@@ -13,7 +15,9 @@ import com.oonurkuru.backend.utils.QueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -27,25 +31,43 @@ import java.util.List;
 /**
  * EmployeeService sınıfının implementesidir. Employee ile ilgili CRUD işlemlerini içerir.
  */
-@Service
+@Component
 public class EmployeeServiceImpl implements EmployeeService {
 
     final private EmployeeDao employeeDao;
     final private DepartmentDao departmentDao;
     final private ProjectDao projectDao;
     final private RoleDao roleDao;
+    final private PasswordEncoder passwordEncoder;
 
     /**
      * Bağımlılıklar yükleniyor
      */
     @Autowired
-    public EmployeeServiceImpl(EmployeeDao employeeDao, DepartmentDao departmentDao, ProjectDao projectDao, RoleDao roleDao) {
+    public EmployeeServiceImpl(EmployeeDao employeeDao, DepartmentDao departmentDao, ProjectDao projectDao, RoleDao roleDao, PasswordEncoder passwordEncoder) {
         this.employeeDao = employeeDao;
         this.departmentDao = departmentDao;
         this.projectDao = projectDao;
         this.roleDao = roleDao;
+        this.passwordEncoder = passwordEncoder;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public EmployeeDTO findEmployeeByUsername(String username) throws CustomException {
+
+        Employee employee;
+        EmployeeDTO employeeDTO;
+
+        try {
+            employee = employeeDao.findEmployeeByUsername(username);
+            employeeDTO = (EmployeeDTO) Mapper.objectMapper(employee, true);
+        } catch (Exception e) {
+            throw new CustomException(600, "Unhandled Error", e.getMessage());
+        }
+
+        return employeeDTO;
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -76,7 +98,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             employee = employeeDao.findOne(employeeId);
             employeeDTO = (EmployeeDTO) Mapper.objectMapper(employee, true);
         } catch (Exception e) {
-            throw new CustomException(600, "Unhandle Error", e.getMessage());
+            throw new CustomException(600, "Unhandled Error", e.getMessage());
         }
 
         return employeeDTO;
@@ -88,6 +110,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee employee = (Employee) Mapper.objectMapper(employeeDTO, false);
 
+        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
         employee.setDepartment(departmentDao.findOne(employeeDTO.getDepartment().getId()));
         employee.setRole(roleDao.findOne(employeeDTO.getRole().getId()));
         employee.setProjects(new ArrayList<>());
@@ -96,7 +119,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         try {
             employeeDao.save(employee);
         } catch (Exception e) {
-            throw new CustomException(100, "Save Entity Error", e.getMessage());
+            throw new CustomException(100, "Entity Save Error", e.getMessage());
         }
 
         return (EmployeeDTO) Mapper.objectMapper(employee, true);
@@ -108,7 +131,46 @@ public class EmployeeServiceImpl implements EmployeeService {
         try {
             employeeDao.delete(employeeId);
         } catch (Exception e) {
-            throw new CustomException(102, "Delete Entity Error", e.getMessage());
+            throw new CustomException(102, "Entity Delete Error", e.getMessage());
         }
+    }
+
+    @Override
+    @Transactional
+    public EmployeeDTO addProjectToEmployee(Integer employeeId, ProjectDTO projectDTO) throws CustomException {
+
+        Project project;
+        Employee employee;
+        try {
+            project = projectDao.findOne(projectDTO.getId());
+            employee = employeeDao.findOne(employeeId);
+        } catch (Exception e) {
+            throw new CustomException(102, "Entity Find Error", e.getMessage());
+        }
+
+        employee.getProjects().add(project);
+        employee = employeeDao.save(employee);
+
+        return (EmployeeDTO) Mapper.objectMapper(employee, true);
+    }
+
+    @Override
+    @Transactional
+    public EmployeeDTO deleteProjectFromEmployee(Integer employeeId, Integer projectId) throws CustomException {
+
+        Project project;
+        Employee employee;
+
+        try {
+            project = projectDao.findOne(projectId);
+            employee = employeeDao.findOne(employeeId);
+        } catch (Exception e) {
+            throw new CustomException(102, "Entity Find Error", e.getMessage());
+        }
+
+        employee.getProjects().remove(project);
+        employee = employeeDao.save(employee);
+
+        return (EmployeeDTO) Mapper.objectMapper(employee, true);
     }
 }

@@ -21,6 +21,9 @@ public class Employee {
     @Column(name = "EMPLOYEE_ID")
     private Integer id;
 
+    @Column(name = "USERNAME")
+    private String username;
+
     @Column(name = "FIRST_NAME")
     private String firstName;
 
@@ -54,7 +57,8 @@ public class Employee {
         this.projects = new ArrayList<>();
     }
 
-    public Employee(String firstName, String lastName, Integer age, Integer salary, Role role, Department department, List<Project> projects) {
+    public Employee(String username, String firstName, String lastName, Integer age, Integer salary, Role role, Department department, List<Project> projects) {
+        this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
@@ -70,6 +74,14 @@ public class Employee {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getFirstName() {

@@ -31,6 +31,10 @@ public class Constants {
 
     public static final Set<String> criteriaList;
 
+    public static final String TOKEN_USERNAME = "username";
+    public static final String TOKEN_CREATED_DATE = "createdDate";
+    public static final String TOKEN_PASSWORD = "password";
+
     static {
         criteriaList = new HashSet<>();
         criteriaList.add(CRITERIA_PAGE);

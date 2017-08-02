@@ -11,7 +11,7 @@ import com.oonurkuru.backend.utils.QueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Onur Kuru on 26.7.2017.
  */
-@Service
+@Component
 public class ProjectServiceImpl implements ProjectService {
 
 
@@ -37,7 +37,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ProjectDTO> findProjectByParameters(MultivaluedMap<String, String> queryMap) {
+    public List<ProjectDTO> findProjectByParameters(MultivaluedMap<String, String> queryMap) throws CustomException{
         PageRequest pageRequest = QueryUtils.createPageRequest(queryMap);
         Example<Project> example = QueryUtils.createExample(queryMap, Project.class);
 
@@ -54,7 +54,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public ProjectDTO findProjectById(Integer projectId) {
+    public ProjectDTO findProjectById(Integer projectId) throws CustomException{
 
         Project project;
         ProjectDTO projectDTO;
@@ -63,7 +63,7 @@ public class ProjectServiceImpl implements ProjectService {
             project = projectDao.findOne(projectId);
             projectDTO = (ProjectDTO) Mapper.objectMapper(project, true);
         } catch (Exception e) {
-            throw new CustomException(600, "Unhandle Error", e.getMessage());
+            throw new CustomException(600, "Unhandled Error", e.getMessage());
         }
 
         return projectDTO;
@@ -71,7 +71,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public ProjectDTO save(ProjectDTO projectDTO) {
+    public ProjectDTO save(ProjectDTO projectDTO) throws CustomException{
         Project project = (Project) Mapper.objectMapper(projectDTO, false);
         project.setEmployeeList(new ArrayList<>());
 
@@ -96,5 +96,36 @@ public class ProjectServiceImpl implements ProjectService {
         } catch (Exception e) {
             throw new CustomException(102, "Delete Entity Error", e.getMessage());
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProjectDTO> findProjectsByEmployee(Integer employeeId) throws CustomException{
+
+        List<Project> projectList;
+        try {
+            projectList = projectDao.findByEmployeeList_Id(employeeId);
+        } catch (Exception e) {
+            throw new CustomException(600, "Unhandled Error", e.getMessage());
+        }
+
+        return (List<ProjectDTO>) Mapper.objectMapper(projectList, false);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ProjectDTO findProjectByEmployeeIdAndProjectId(Integer employeeId, Integer projectId) throws CustomException{
+
+        Project project;
+        ProjectDTO projectDTO;
+
+        try {
+            project = projectDao.findByIdAndEmployeeList_Id(projectId, employeeId);
+            projectDTO = (ProjectDTO) Mapper.objectMapper(project, true);
+        } catch (Exception e) {
+            throw new CustomException(600, "Unhandled Error", e.getMessage());
+        }
+
+        return projectDTO;
     }
 }

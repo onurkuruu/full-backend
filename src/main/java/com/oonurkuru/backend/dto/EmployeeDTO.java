@@ -1,5 +1,6 @@
 package com.oonurkuru.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.oonurkuru.backend.annotations.Mapper;
 import com.oonurkuru.backend.domains.Employee;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -17,6 +18,10 @@ import java.util.List;
 public class EmployeeDTO implements Serializable {
 
     private Integer id;
+
+    @NotEmpty(message = "Kullanıcı Adı alanı boş olamaz")
+    @Size(min = 1, max = 30, message = "Kullanıcı Adı en fazla 30 karakter içermelidir.")
+    private String username;
 
     @NotEmpty(message = "İsim alanı boş olamaz")
     @Size(min = 1, max = 30, message = "İsim en fazla 30 karakter içermelidir.")
@@ -36,7 +41,7 @@ public class EmployeeDTO implements Serializable {
     private Integer salary;
 
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+){5,20}$", message = "Şifre en az bir sayı ve bir harf içermelidir ve toplamda en az 5 en fazla 20 karakter içermelidir.")
-    @NotNull(message = "Maaş alanı boş olamaz")
+    @NotEmpty(message = "Şifre alanı boş olamaz")
     private String password;
 
     @NotNull(message = "Role alanı boş olamaz")
@@ -57,6 +62,14 @@ public class EmployeeDTO implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getFirstName() {

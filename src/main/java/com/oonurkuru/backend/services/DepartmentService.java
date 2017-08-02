@@ -1,6 +1,8 @@
 package com.oonurkuru.backend.services;
 
 import com.oonurkuru.backend.dto.DepartmentDTO;
+import com.oonurkuru.backend.exceptions.CustomException;
+import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.List;
@@ -9,24 +11,14 @@ import java.util.List;
  * Created by Onur Kuru on 26.7.2017.
  */
 
+@Service
 public interface DepartmentService {
 
-    default public List<DepartmentDTO> findDepartmentByParameters(MultivaluedMap<String, String> queryMap) {
-        //Log
-        return null;
-    }
+    List<DepartmentDTO> findDepartmentByParameters(MultivaluedMap<String, String> queryMap) throws CustomException;
 
-    default public DepartmentDTO findDepartmentById(Integer employeeId) {
-        //Log
-        return null;
-    }
+    DepartmentDTO findDepartmentById(Integer employeeId) throws CustomException;
 
-    default public DepartmentDTO save(DepartmentDTO employee) {
-        //Log
-        return null;
-    }
+    DepartmentDTO save(DepartmentDTO employee) throws CustomException;
 
-    default public void delete(Integer departmentId) {
-        //Log
-    }
+    void delete(Integer departmentId) throws CustomException;
 }

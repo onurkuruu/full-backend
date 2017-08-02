@@ -12,6 +12,7 @@ import com.oonurkuru.backend.utils.QueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
  * Created by Onur Kuru on 26.7.2017.
  */
 
-@Service
+@Component
 public class DepartmentServiceImpl implements DepartmentService {
 
     final private DepartmentDao departmentDao;
@@ -62,7 +63,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         try {
             department = departmentDao.findOne(departmentId);
         } catch (Exception e) {
-            throw new CustomException(600, "Unhandle Error", e.getMessage());
+            throw new CustomException(600, "Unhandled Error", e.getMessage());
         }
 
         return (DepartmentDTO) Mapper.objectMapper(department, true);

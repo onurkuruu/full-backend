@@ -1,6 +1,8 @@
 package com.oonurkuru.backend.services;
 
 import com.oonurkuru.backend.dto.ProjectDTO;
+import com.oonurkuru.backend.exceptions.CustomException;
+import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.List;
@@ -8,24 +10,19 @@ import java.util.List;
 /**
  * Created by Onur Kuru on 26.7.2017.
  */
+
+@Service
 public interface ProjectService {
 
-    default public List<ProjectDTO> findProjectByParameters(MultivaluedMap<String, String> queryMap) {
-        //Log
-        return null;
-    }
+    List<ProjectDTO> findProjectByParameters(MultivaluedMap<String, String> queryMap) throws CustomException;
 
-    default public ProjectDTO findProjectById(Integer projectId) {
-        //Log
-        return null;
-    }
+    ProjectDTO findProjectById(Integer projectId) throws CustomException;
 
-    default public ProjectDTO save(ProjectDTO projectDTO) {
-        //Log
-        return null;
-    }
+    ProjectDTO save(ProjectDTO projectDTO) throws CustomException;
 
-    default public void delete(Integer projectId) {
-        //Log
-    }
+    void delete(Integer projectId) throws CustomException;
+
+    List<ProjectDTO> findProjectsByEmployee(Integer employeeId) throws CustomException;
+
+    ProjectDTO findProjectByEmployeeIdAndProjectId(Integer employeeId, Integer projectId) throws CustomException;
 }

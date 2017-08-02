@@ -1,6 +1,9 @@
 package com.oonurkuru.backend.services;
 
 import com.oonurkuru.backend.dto.EmployeeDTO;
+import com.oonurkuru.backend.dto.ProjectDTO;
+import com.oonurkuru.backend.exceptions.CustomException;
+import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.List;
@@ -12,25 +15,22 @@ import java.util.List;
 /**
  * Employee CRUD işlemleri için arayüz
  */
+
+@Service
 public interface EmployeeService {
 
-    default public List<EmployeeDTO> findEmployeeByParameters(MultivaluedMap<String, String> queryMap) {
-        //Log
-        return null;
-    }
+    EmployeeDTO findEmployeeByUsername(String username) throws CustomException;
 
-    default public EmployeeDTO findEmployeeById(Integer employeeId) {
-        //Log
-        return null;
-    }
+    List<EmployeeDTO> findEmployeeByParameters(MultivaluedMap<String, String> queryMap) throws CustomException;
 
-    default public EmployeeDTO save(EmployeeDTO employee) {
-        //Log
-        return null;
-    }
+    EmployeeDTO findEmployeeById(Integer employeeId) throws CustomException;
 
-    default public void delete(Integer employeeId) {
-        //Log
-    }
+    EmployeeDTO save(EmployeeDTO employee) throws CustomException;
+
+    void delete(Integer employeeId) throws CustomException;
+
+    EmployeeDTO addProjectToEmployee(Integer employeeId, ProjectDTO projectDTO) throws CustomException;
+
+    EmployeeDTO deleteProjectFromEmployee(Integer employeeId, Integer projectId) throws CustomException;
 
 }
